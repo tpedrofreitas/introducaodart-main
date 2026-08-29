@@ -1,4 +1,4 @@
-import 'Forma.dart';
+import 'forma.dart';
 import 'enum.dart';
 
 //Herança/Generalização

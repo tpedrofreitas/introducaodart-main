@@ -1,6 +1,7 @@
 import 'enum.dart';
 
 abstract class Forma {
+  //declarando uma variavel de instancia
   tpForma tipoForma;
 
   //declarando o construção
@@ -15,6 +16,6 @@ abstract class Forma {
 
   //declarando um método de instancia (concreto)
   void imprimeForma() {
-    print("${tipoForma.name} com area de ${calculaArea()}");
+    print("${tipoForma.name} -${tipoForma.index} com area de ${calculaArea()}");
   }
 }
