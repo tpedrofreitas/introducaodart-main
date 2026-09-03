@@ -6,7 +6,7 @@ class Gato extends Animal {
   int ronrom;
 
   Gato(String nome, double peso, this.ronrom, Alimento alimento)
-    : super(nome, peso, alimento, Especie.Mamifero);
+    : super.completo(nome, peso, alimento, Especie.Mamifero);
 
   void fazerCarinho() {
     print('$nome está ronronando de tanto carinho.');
