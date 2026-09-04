@@ -1,1 +1,1 @@
-enum Especie { Mamifero, Aves, Peixes, Anfibios, Insetos, Aracnideos }
+enum Especie { MAMIFEROS, AVES, PEIXE, ANFIBIOS, INSETOS, ARACNIDEOS }

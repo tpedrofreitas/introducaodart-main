@@ -11,7 +11,7 @@ class Cachorro extends Animal {
   Cachorro(String nome, double peso, this.fofura, Alimento alimento)
     : brinquedos = [],
 
-      super.completo(nome, peso, alimento, Especie.Mamifero);
+      super.completo(nome, peso, alimento, Especie.MAMIFEROS);
 
   void incluirBrinquedo(Brinquedo brinquedo) {
     brinquedos.add(brinquedo);
