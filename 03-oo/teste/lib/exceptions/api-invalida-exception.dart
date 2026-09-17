@@ -4,8 +4,7 @@ class ApiInvalidaException implements Exception{
   ApiInvalidaException(this.mensagem);
 
   @override
-  String toString() {    
+  String toString(){
     return mensagem;
   }
-
 }

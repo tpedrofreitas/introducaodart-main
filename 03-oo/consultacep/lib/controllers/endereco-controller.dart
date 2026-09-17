@@ -1,51 +1,34 @@
-import 'dart:convert';
-
-import 'package:consultacep/exceptions/api-invalida-exception.dart';
 import 'package:consultacep/exceptions/cep-invalido-exception.dart';
-import 'package:consultacep/exceptions/cep-nao-encontrado.dart';
 import 'package:consultacep/models/endereco.dart';
-import 'package:http/http.dart' as http;
+import 'package:consultacep/services/CEPService.dart';
 
 class EnderecoController {
 
-  String validaCEP(String? cep) {
-  if (cep == null || cep.isEmpty) {
-   //throw Exception("CEP invalido!! Tente Novamente.");
-  throw CepInvalidoException();
-  } else {
-    cep = cep.replaceAll(RegExp(r'[^0-9]'), '');
+  CEPService cepService = CEPService();
 
-    if (cep.length != 8) {
-      throw CepInvalidoException();
+  String validaCEP(String? cep) {
+    //se o cep digitado dor nulo ou em branco, retorna uma exceção
+    if (cep == null || cep.isEmpty) {
+      // throw Exception("CEP invalido!!! Tente novamente.");
+      // throw CepInvalidException("CEP invalido!!! Tente novamente.");
+      throw CepInvalidException();
     } else {
-      return cep;
+      //retirar todos os caracteres e letras, deixando apenas os números
+      cep = cep.replaceAll(RegExp(r'[^0-9]'), '');
+
+      // Se a quantidade de números for diferente de 8 retorna uma exceção
+      // caso contrário retorna o CEP sem caracteres ou letras
+      if (cep.length != 8) {
+        // throw Exception("CEP inválido, deve possuir 8 números");
+        // throw CepInvalidException("CEP inválido, deve possuir 8 números");
+        throw CepInvalidException();
+      } else {
+        return cep;
+      }
     }
   }
-}
+
   Future<Endereco> buscarEndereco(String cep) async {
-    final url = Uri.parse('http://viacep.com.br/ws/$cep/json/');
-  final resposta;
-    try{
-      resposta = await http.get(url);
-    }catch(e){
-      //throw Exception("Erro na url: ${e.toString()}");
-      throw ApiInvalidaException("Erro na url: $e");
-    }
-    
-
-    if (resposta.statusCode == 200 ){
-
-      Map<String, dynamic> cep = jsonDecode(resposta.body);
-      
-      if (cep.containsKey('erro') && cep['erro'] == 'true'){
-       // throw Exception("CEP não encontrado!!");
-        throw CepNaoEncontradoException();
-      } else {
-        return Endereco.deJson(cep);
-      }
-    } else{
-     //throw Exception("Erro na busca do endereço:${resposta.statusCode}");
-     throw ApiInvalidaException("Erro ma busca do endereco: ${resposta.statusCode}");
-    }
+    return cepService.consultar(cep);
   }
 }
