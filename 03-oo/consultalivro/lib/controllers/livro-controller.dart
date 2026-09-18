@@ -13,7 +13,7 @@ class LivroController {
     }
   }
 
-  Future<Livro> buscarLivro(String busca) async {
+  Future<List<Livro>> buscarLivro(String busca) async {
     return livroService.consultar(busca);
   }
 }
