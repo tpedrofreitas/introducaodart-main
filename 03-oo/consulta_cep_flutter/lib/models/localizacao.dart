@@ -6,8 +6,8 @@ class Localizacao {
 
   factory Localizacao.deJson(Map<String, dynamic> json) {
     return Localizacao(
-      latitude: json['lat'] ?? '',
-      longitude: json['lng'] ?? '',
+      latitude: (json['lat'] ?? '').toString(),
+      longitude: (json['lng'] ?? '').toString(),
     );
   }
 }

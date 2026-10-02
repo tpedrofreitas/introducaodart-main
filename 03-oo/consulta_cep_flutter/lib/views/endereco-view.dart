@@ -38,13 +38,11 @@ class _EnderecoViewState extends State<EnderecoView> {
   final _cepController = TextEditingController();
   final _enderecoController = EnderecoController();
 
-  Endereco? endereco;
-
-  Localizacao? localizacao;
-
   bool _carregando = false;
   String? _mensagemErro;
   Endereco? _endereco;
+  Localizacao? _localizacao;
+  bool _localizacaoIndisponivel = false;
 
   Future<void> _consultar() async {
     FocusScope.of(context).unfocus();
@@ -53,20 +51,23 @@ class _EnderecoViewState extends State<EnderecoView> {
       _carregando = true;
       _mensagemErro = null;
       _endereco = null;
+      _localizacao = null;
+      _localizacaoIndisponivel = false;
     });
 
     try {
       final cep = _enderecoController.validaCEP(_cepController.text);
-      final endereco = await _enderecoController.buscarEndereco(cep);
-      final localizacao = await _enderecoController.buscarLocalizacao(cep);
+      final enderecoEncontrado = await _enderecoController.buscarEndereco(cep);
 
-      setState(() {
-        this.localizacao = localizacao;
-        this.endereco = endereco;
-      });
+      setState(() => _endereco = enderecoEncontrado);
 
-      
-      setState(() => _endereco = endereco);
+      // A localização é opcional: se falhar, o endereço continua aparecendo
+      try {
+        final loc = await _enderecoController.buscarLocalizacao(cep);
+        setState(() => _localizacao = loc);
+      } catch (_) {
+        setState(() => _localizacaoIndisponivel = true);
+      }
     } on CepInvalidException catch (e) {
       setState(() => _mensagemErro = e.toString());
     } on CepNaoEncontradoException catch (e) {
@@ -85,6 +86,8 @@ class _EnderecoViewState extends State<EnderecoView> {
     setState(() {
       _mensagemErro = null;
       _endereco = null;
+      _localizacao = null;
+      _localizacaoIndisponivel = false;
       _carregando = false;
     });
   }
@@ -246,7 +249,7 @@ class _EnderecoViewState extends State<EnderecoView> {
                 ),
               ),
               const Divider(),
-              _linha(Icons.markunread_mailbox_outlined, 'CEP', e.cep),
+
               _linha(Icons.markunread_mailbox_outlined, 'CEP', e.cep),
               _linha(Icons.signpost_outlined, 'Logradouro', e.logradouro),
               _linha(Icons.apartment, 'Unidade', e.unidade),
@@ -259,6 +262,17 @@ class _EnderecoViewState extends State<EnderecoView> {
               _linha(Icons.numbers, 'IBGE', e.ibge),
               _linha(Icons.numbers, 'GIA', e.gia),
               _linha(Icons.numbers, 'SIAFI', e.siafi),
+
+              const Divider(),
+              if (_localizacao != null) ...[
+                _linha(Icons.my_location, 'Latitude', _localizacao!.latitude),
+                _linha(Icons.my_location, 'Longitude', _localizacao!.longitude),
+              ] else if (_localizacaoIndisponivel)
+                _linha(
+                  Icons.location_off_outlined,
+                  'Localização',
+                  'Indisponível',
+                ),
             ],
           ),
         ),
