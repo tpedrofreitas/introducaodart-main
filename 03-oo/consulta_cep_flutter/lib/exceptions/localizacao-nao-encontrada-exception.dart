@@ -1,9 +1,7 @@
 // Implements: deve ser utilizada para criar uma herança de uma classe abstract inteface
-class CepNaoEncontradoException implements Exception{
-
+class LocalizacaoNaoEncontradaException implements Exception {
   @override
   String toString() {
-    return "CEP não encontrado!!!";
+    return "Não foi possivel obter a localização!!";
   }
-
 }

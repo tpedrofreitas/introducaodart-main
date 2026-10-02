@@ -1,4 +1,5 @@
 import 'package:consulta_cep_flutter/controllers/endereco-controller.dart';
+import 'package:consulta_cep_flutter/models/localizacao.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -37,6 +38,10 @@ class _EnderecoViewState extends State<EnderecoView> {
   final _cepController = TextEditingController();
   final _enderecoController = EnderecoController();
 
+  Endereco? endereco;
+
+  Localizacao? localizacao;
+
   bool _carregando = false;
   String? _mensagemErro;
   Endereco? _endereco;
@@ -53,6 +58,14 @@ class _EnderecoViewState extends State<EnderecoView> {
     try {
       final cep = _enderecoController.validaCEP(_cepController.text);
       final endereco = await _enderecoController.buscarEndereco(cep);
+      final localizacao = await _enderecoController.buscarLocalizacao(cep);
+
+      setState(() {
+        this.localizacao = localizacao;
+        this.endereco = endereco;
+      });
+
+      
       setState(() => _endereco = endereco);
     } on CepInvalidException catch (e) {
       setState(() => _mensagemErro = e.toString());
@@ -222,6 +235,18 @@ class _EnderecoViewState extends State<EnderecoView> {
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Column(
             children: [
+              ListTile(
+                leading: Icon(Icons.check_circle, color: Colors.green.shade700),
+                title: Text(
+                  'Endereço encontrado',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green.shade700,
+                  ),
+                ),
+              ),
+              const Divider(),
+              _linha(Icons.markunread_mailbox_outlined, 'CEP', e.cep),
               _linha(Icons.markunread_mailbox_outlined, 'CEP', e.cep),
               _linha(Icons.signpost_outlined, 'Logradouro', e.logradouro),
               _linha(Icons.apartment, 'Unidade', e.unidade),
